@@ -131,6 +131,13 @@ namespace cakeslice
 
 		void Start()
 		{
+			if (sourceCamera == null)
+				sourceCamera = GetComponent<Camera>();
+
+			// URP renders through OutlineRendererFeature, without an auxiliary camera.
+			if (GraphicsSettings.currentRenderPipeline != null)
+				return;
+
 			CreateMaterialsIfNeeded();
 			UpdateMaterialsPublicProperties();
 
@@ -215,17 +222,27 @@ namespace cakeslice
 
 			commandBuffer.Clear();
 
+			RecordOutlines(commandBuffer, sourceCamera);
+			outlineCamera.Render();
+		}
+
+		internal bool HasOutlines => outlines.Count > 0;
+
+		internal void RecordOutlines(CommandBuffer commandBuffer, Camera camera)
+		{
+			CreateMaterialsIfNeeded();
+			UpdateMaterialsPublicProperties();
 			foreach (Outline outline in outlines)
 			{
-				LayerMask l = sourceCamera.cullingMask;
+				LayerMask l = camera.cullingMask;
 
-				if (outline != null && l == (l | (1 << outline.gameObject.layer)))
+				if (outline != null && outline.isActiveAndEnabled && outline.Renderer != null && outline.Renderer.enabled && l == (l | (1 << outline.gameObject.layer)))
 				{
 					for (int v = 0; v < outline.SharedMaterials.Length; v++)
 					{
 						Material m = null;
 
-						if (outline.SharedMaterials[v].HasProperty("_MainTex") && outline.SharedMaterials[v].mainTexture != null && outline.SharedMaterials[v])
+						if (outline.SharedMaterials[v] != null && outline.SharedMaterials[v].mainTexture != null)
 						{
 							foreach (Material g in materialBuffer)
 							{
@@ -288,13 +305,11 @@ namespace cakeslice
 					}
 				}
 			}
-
-			outlineCamera.Render();
 		}
 
 		private void OnEnable()
 		{
-			Outline[] o = FindObjectsOfType<Outline>();
+			Outline[] o = FindObjectsByType<Outline>(FindObjectsSortMode.InstanceID);
 			if (autoEnableOutlines)
 			{
 				foreach (Outline oL in o)
@@ -307,7 +322,7 @@ namespace cakeslice
 			{
 				foreach (Outline oL in o)
 				{
-					if (!outlines.Contains(oL))
+					if (oL.isActiveAndEnabled && !outlines.Contains(oL))
 						outlines.Add(oL);
 				}
 			}
@@ -315,6 +330,8 @@ namespace cakeslice
 
 		void OnDestroy()
 		{
+			if (Instance == this)
+				Instance = null;
 			if (renderTexture != null)
 				renderTexture.Release();
 			if (extraRenderTexture != null)
@@ -344,7 +361,8 @@ namespace cakeslice
 				outlineShader = Resources.Load<Shader>("OutlineShader");
 			if (outlineBufferShader == null)
 			{
-				outlineBufferShader = Resources.Load<Shader>("OutlineBufferShader");
+				outlineBufferShader = Resources.Load<Shader>(GraphicsSettings.currentRenderPipeline != null
+					? "OutlineBufferShaderURP" : "OutlineBufferShader");
 			}
 			if (outlineShaderMaterial == null)
 			{
