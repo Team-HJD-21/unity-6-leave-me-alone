@@ -2,7 +2,7 @@
 
 ## First Multiplayer game developed by TeamHJD
 
-## This game is a competitive tomato farming game where you compete against an AI farmer to see who can harvest the most tomatoes within 5 minutes. The AI farmer can do everything the player can, based on its own judgment.
+### This game is a competitive tomato farming game where you compete against an AI farmer to see who can harvest the most tomatoes within 5 minutes. The AI farmer can do everything the player can, based on its own judgment.
 
 
 Tomatoes go through 5 stages: Planting, Growing, Ripening, Fully Ripe, and Harvest.  
@@ -19,13 +19,14 @@ There are 3 types of items available, randomly provided upon harvesting tomatoes
 The Pickup Truck rushes to the opponent’s farm and destroys their crops.  
 The Boost Drone buffs your own farm, reducing each ripening step to 1 second and the total ripening time to 5 seconds.  
 The Toxic Drone flies to the opponent's field and spreads poison, annihilating their crops.
+
+
 ---
 ## TeamHJD의 첫번째 멀티플레이어 게임입니다
 
 
-이 게임은 AI 농부와 대항해서 토마토 농사를 지어 5분 안에 누가 가장 많이 수확하는지 겨루는 게임입니다.
-AI 농부는 자기 판단에 맞게 Player가 할 수 있는 모든 것을 동일하게 할 수 있습니다.
----
+### 이 게임은 AI 농부와 대항해서 토마토 농사를 지어 5분 안에 누가 가장 많이 수확하는지 겨루는 게임입니다. AI 농부는 자기 판단에 맞게 Player가 할 수 있는 모든 것을 동일하게 할 수 있습니다.
+
 토마토는 심기, 자라기, 익기, 다 익음, 수확 5가지 상태가 있고 자라기 과정에는 내부적으로 4개의 토마토 모양이 있습니다.
 각 단계는 2초의 간격을 두고 있고 심기와 수확은 4초가 소요됩니다. 익는 시간은 10초 입니다.
 
