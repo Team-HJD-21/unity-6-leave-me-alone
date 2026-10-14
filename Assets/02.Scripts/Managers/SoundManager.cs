@@ -5,19 +5,22 @@ using UnityEngine.Audio;
 
 public class SoundManager : Singleton<SoundManager>
 {
+    private const string BgmVolumeParameter = "BGMVolume";
+    private const string SfxVolumeParameter = "SFXVolume";
+
     [Header("Audio Mixer Groups")]
     public AudioMixerGroup bgmMixerGroup;
     public AudioMixerGroup sfxMixerGroup;
 
     [Header("BGM")]
     public AudioClip[] bgmClips;
-    public float bgmVolume;
+    [Range(0f, 1f)] public float bgmVolume;
     private AudioSource[] _bgmPlayers;
     private int _bgmChannelIndex;
 
     [Header("SFX")]
     public AudioClip[] sfxClips;
-    public float sfxVolume;
+    [Range(0f, 1f)] public float sfxVolume;
     private AudioSource[] _sfxPlayers;
     private Dictionary<string, AudioSource> _activeSfx = new Dictionary<string, AudioSource>();
     private Dictionary<Sfx, AudioSource> _restrictedSfxInstances = new Dictionary<Sfx, AudioSource>();
@@ -54,12 +57,19 @@ public class SoundManager : Singleton<SoundManager>
         TomatoPick
     }
 
-    void Awake()
+    public override void Awake()
     {
         base.Awake();
+        if (Instance != this) return;
+        bgmVolume = Mathf.Clamp01(bgmVolume);
+        sfxVolume = Mathf.Clamp01(sfxVolume);
         _bgmChannelIndex = bgmClips.Length;
         Init();
-        InitializeMixerVolumes();
+    }
+
+    void Start()
+    {
+        RestoreAudioMixerSettings();
     }
 
     void Init()
@@ -71,7 +81,8 @@ public class SoundManager : Singleton<SoundManager>
         {
             _bgmPlayers[i] = _bgmObject.AddComponent<AudioSource>();
             _bgmPlayers[i].playOnAwake = false;
-            _bgmPlayers[i].volume = bgmVolume;
+            _bgmPlayers[i].volume = bgmMixerGroup != null ? 1f : bgmVolume;
+            _bgmPlayers[i].priority = 0;
             _bgmPlayers[i].loop = true;
             _bgmPlayers[i].outputAudioMixerGroup = bgmMixerGroup;
         }
@@ -79,33 +90,30 @@ public class SoundManager : Singleton<SoundManager>
         _sfxObject.transform.parent = transform;
     }
 
-    private void InitializeMixerVolumes()
-    {
-        if (bgmMixerGroup != null)
-        {
-            bgmMixerGroup.audioMixer.SetFloat("BGM", Mathf.Log10(Mathf.Clamp(bgmVolume, 0.0001f, 1f)) * 20 + 42f);
-        }
-        if (sfxMixerGroup != null)
-        {
-            sfxMixerGroup.audioMixer.SetFloat("SFX", Mathf.Log10(Mathf.Clamp(sfxVolume, 0.0001f, 1f)) * 20 + 16f);
-        }
-    }
-
     public void PlayBGM(Bgm bgm, bool isPlay)
     {
+        int index = (int)bgm;
+        if (index < 0 || index >= bgmClips.Length || bgmClips[index] == null)
+        {
+            // Debug.LogWarning($"BGM clip is not assigned: {bgm}", this);
+            return;
+        }
+
         for (int i = 0; i < _bgmPlayers.Length; i++)
         {
-            int loopIndex = (i + _bgmChannelIndex) % _bgmPlayers.Length;
-            _bgmPlayers[loopIndex].clip = bgmClips[(int)bgm];
-            if (isPlay)
+            if (isPlay && i != index)
             {
-                if (_bgmPlayers[loopIndex].isPlaying)
-                    continue;
-                _bgmPlayers[loopIndex].Play();
+                _bgmPlayers[i].Stop();
+                continue;
             }
-            else
+            if (i != index) continue;
+
+            var source = _bgmPlayers[i];
+            if (!isPlay) source.Stop();
+            else if (!source.isPlaying)
             {
-                _bgmPlayers[loopIndex].Stop();
+                source.clip = bgmClips[index];
+                source.Play();
             }
         }
     }
@@ -221,10 +229,10 @@ public class SoundManager : Singleton<SoundManager>
     public void StopSfx(string id)
     {
         if (id == null) return;
-        if (_activeSfx.ContainsKey(id))
+        if (_activeSfx.TryGetValue(id, out var source))
         {
-            _activeSfx[id].Stop();
             _activeSfx.Remove(id);
+            if (source != null) source.Stop();
         }
     }
 
@@ -241,20 +249,21 @@ public class SoundManager : Singleton<SoundManager>
 
     public void ChangeBgmVolume(float vol)
     {
-        bgmVolume = vol;
+        bgmVolume = Mathf.Clamp01(vol);
         for (int i = 0; i < _bgmPlayers.Length; i++)
         {
-            _bgmPlayers[i].volume = bgmVolume;
+            _bgmPlayers[i].volume = bgmMixerGroup != null ? 1f : bgmVolume;
         }
-        bgmMixerGroup.audioMixer.SetFloat("BGMVolume", Mathf.Log10(Mathf.Clamp(bgmVolume, 0.0001f, 1f)) * 20 + 42f);
+        ApplyMixerVolume(bgmMixerGroup, BgmVolumeParameter, bgmVolume);
     }
 
     public void ChangeSfxVolume(float vol)
     {
-        foreach (var source in _activeSfx.Values)
-            source.volume = vol;
-        sfxVolume = vol;
-        sfxMixerGroup.audioMixer.SetFloat("SFXVolume", Mathf.Log10(Mathf.Clamp(sfxVolume, 0.0001f, 1f)) * 20 + 16f);
+        sfxVolume = Mathf.Clamp01(vol);
+        if (sfxMixerGroup == null)
+            foreach (var source in _activeSfx.Values)
+                if (source != null) source.volume = sfxVolume;
+        ApplyMixerVolume(sfxMixerGroup, SfxVolumeParameter, sfxVolume);
     }
 
     public void UIBgm(bool isPlay)
@@ -265,14 +274,14 @@ public class SoundManager : Singleton<SoundManager>
 
     public void RestoreAudioMixerSettings()
     {
-        if (bgmMixerGroup != null)
-        {
-            bgmMixerGroup.audioMixer.SetFloat("BGMVolume", Mathf.Log10(Mathf.Clamp(bgmVolume, 0.0001f, 1f)) * 20 + 42f);
-        }
-        if (sfxMixerGroup != null)
-        {
-            sfxMixerGroup.audioMixer.SetFloat("SFXVolume", Mathf.Log10(Mathf.Clamp(sfxVolume, 0.0001f, 1f)) * 20 + 16f);
-        }
+        ApplyMixerVolume(bgmMixerGroup, BgmVolumeParameter, bgmVolume);
+        ApplyMixerVolume(sfxMixerGroup, SfxVolumeParameter, sfxVolume);
+    }
+
+    private static void ApplyMixerVolume(AudioMixerGroup group, string parameter, float volume)
+    {
+        if (group != null)
+            group.audioMixer.SetFloat(parameter, Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20);
     }
 
     private IEnumerator RemoveSfxWhenFinished(string id, AudioSource source)
