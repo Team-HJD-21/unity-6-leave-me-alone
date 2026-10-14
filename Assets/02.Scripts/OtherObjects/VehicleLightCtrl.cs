@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class VehicleLightCtrl : MonoBehaviour
 {
+    private static readonly HashSet<VehicleLightCtrl> activeVehicles = new();
     public Material material;
     public GameObject[] lights;
     public GameObject mudParticle;
@@ -34,6 +35,12 @@ public class VehicleLightCtrl : MonoBehaviour
     void Awake()
     {
         SetLegacyCamerasActive(false);
+    }
+
+    void OnEnable()
+    {
+        activeVehicles.Add(this);
+        UpdateItemUsage();
     }
 
     void Start()
@@ -96,14 +103,13 @@ public class VehicleLightCtrl : MonoBehaviour
             pipCamera.Hide();
         }
 
-        SoundManager.Instance.StopSfx(CarAccelerationSoundID);
-        if (GameManager.Instance.PLayerUsingItem)
+        var soundManager = FindFirstObjectByType<SoundManager>();
+        if (soundManager != null)
         {
-            GameManager.Instance.PLayerUsingItem = false;
-            return;
+            soundManager.StopSfx(CarEngineSoundID);
+            soundManager.StopSfx(CarHornID);
+            soundManager.StopSfx(CarAccelerationSoundID);
         }
-
-        GameManager.Instance.EnemyUsingItem = false;
     }
 
     private void SetLegacyCamerasActive(bool isActive)
@@ -142,16 +148,39 @@ public class VehicleLightCtrl : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnDisable()
     {
-        Debug.Log("OnTriggerEnterVehicleLightCtrl");
-        Invoke(nameof(TurnOffCameras),2f);
+        StopAllCoroutines();
+        CancelInvoke();
+        TurnOffCameras();
+        activeVehicles.Remove(this);
+        UpdateItemUsage();
+    }
+
+    private void UpdateItemUsage()
+    {
+        bool isPlayerVehicle = CompareTag("PlayerCar");
+        if (!isPlayerVehicle && !CompareTag("EnemyCar")) return;
+
+        bool anyActive = false;
+        foreach (var vehicle in activeVehicles)
+            if (vehicle != null && vehicle.isActiveAndEnabled && vehicle.CompareTag(tag))
+            {
+                anyActive = true;
+                break;
+            }
+
+        var manager = FindFirstObjectByType<GameManager>();
+        if (manager == null) return;
+        if (isPlayerVehicle) manager.PLayerUsingItem = anyActive;
+        else manager.EnemyUsingItem = anyActive;
     }
 }
 
 [DisallowMultipleComponent]
 public sealed class VehiclePipCamera : MonoBehaviour
 {
+    private static VehiclePipCamera displayOwner;
     private const string LogTag = "[VehiclePIP]";
     private const int TextureWidth = 640;
     private const int TextureHeight = 360;
@@ -194,6 +223,9 @@ public sealed class VehiclePipCamera : MonoBehaviour
 
         CreateOverlay(displaySize, topRightMargin, borderWidth, borderColor);
         isConfigured = true;
+        if (displayOwner != null && displayOwner != this)
+            displayOwner.Hide();
+        displayOwner = this;
 #endif
     }
 
@@ -216,17 +248,20 @@ public sealed class VehiclePipCamera : MonoBehaviour
             pipCamera.enabled = false;
         }
 
+        if (pipBrain != null) pipBrain.enabled = false;
+
         if (pipCanvasObject != null)
         {
             pipCanvasObject.SetActive(false);
         }
 
         RestoreMainBrainMasks();
+        if (displayOwner == this) displayOwner = null;
     }
 
     private void Show(GameObject virtualCamera)
     {
-        if (!isConfigured || virtualCamera == null)
+        if (!isConfigured || virtualCamera == null || displayOwner != this)
         {
             return;
         }
@@ -234,6 +269,7 @@ public sealed class VehiclePipCamera : MonoBehaviour
         ExcludePipChannelFromMainBrains();
         SetVirtualCameraActive(virtualCamera);
 
+        pipBrain.enabled = true;
         pipCamera.enabled = true;
         pipCanvasObject.SetActive(true);
     }
@@ -268,7 +304,7 @@ public sealed class VehiclePipCamera : MonoBehaviour
 
         if (mainCamera == null)
         {
-            Debug.LogWarning($"{LogTag} Cannot create PIP because no gameplay camera was found.");
+            // Debug.LogWarning($"{LogTag} Cannot create PIP because no gameplay camera was found.");
             return false;
         }
 
@@ -369,7 +405,7 @@ public sealed class VehiclePipCamera : MonoBehaviour
 
         foreach (CinemachineBrain brain in brains)
         {
-            if (brain == null || brain == pipBrain || originalBrainMasks.ContainsKey(brain))
+            if (brain == null || !brain.isActiveAndEnabled || brain == pipBrain || originalBrainMasks.ContainsKey(brain))
             {
                 continue;
             }
@@ -404,7 +440,7 @@ public sealed class VehiclePipCamera : MonoBehaviour
 
     private void OnDestroy()
     {
-        RestoreMainBrainMasks();
+        Hide();
 
         if (renderTexture != null)
         {

@@ -22,7 +22,7 @@ public partial class EnemyMoveBackwardAction : Action
 
         if (targetObj == null)
         {
-            Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
+            // Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
             return Status.Failure;
         }
 
@@ -30,7 +30,7 @@ public partial class EnemyMoveBackwardAction : Action
 
         if (_enemy == null)
         {
-            Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 EnemyCtrl 없습니다.");
+            // Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 EnemyCtrl 없습니다.");
             return Status.Failure;
         }
 
@@ -43,7 +43,7 @@ public partial class EnemyMoveBackwardAction : Action
 
         moveBachkCoroutine = helper.StartCoroutine(SmoothMoveBack(targetObj.transform, 0.8f, 1.8f));
 
-        Debug.Log($"✅ Target '{targetObj.name}'가 부드럽게 뒤로 이동합니다.");
+        // Debug.Log($"✅ Target '{targetObj.name}'가 부드럽게 뒤로 이동합니다.");
         return Status.Running;
     }
 

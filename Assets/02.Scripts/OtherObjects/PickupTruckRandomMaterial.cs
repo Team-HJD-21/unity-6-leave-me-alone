@@ -10,7 +10,7 @@ public class PickupTruckRandomMaterial : MonoBehaviour
         _meshRenderer = GetComponent<MeshRenderer>();
         if (_meshRenderer == null)
         {
-            Debug.LogWarning("MeshRenderer 컴포넌트를 찾을 수 없습니다.");
+            // Debug.LogWarning("MeshRenderer 컴포넌트를 찾을 수 없습니다.");
             return;
         }
 
@@ -21,7 +21,7 @@ public class PickupTruckRandomMaterial : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Material 배열이 비어 있습니다.");
+            // Debug.LogWarning("Material 배열이 비어 있습니다.");
         }
     }
 }

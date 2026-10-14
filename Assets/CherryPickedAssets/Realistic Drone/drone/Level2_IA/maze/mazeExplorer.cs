@@ -83,8 +83,9 @@ public class mazeExplorer : IA {
             
             // initializing LineRenderer
             lr = phisicalObject.AddComponent<LineRenderer>();
-            lr.SetVertexCount(maxNrOfSons * 2);
-            lr.SetWidth(0.35f, 0f);
+            lr.positionCount = maxNrOfSons * 2;
+            lr.startWidth = 0.35f;
+            lr.endWidth = 0f;
             for (int i = 0; i < maxNrOfSons * 2; i++)
                 lr.SetPosition(i, center);
 
@@ -155,7 +156,6 @@ public class mazeExplorer : IA {
         /// </summary>
         public float getEstimation() { return estimation; }
         bool hasBeenChecked;
-        bool isSource;
         Node predecessor;
         /// <summary>
         /// Get the predecessor of the node. Is related to the Dijkstra algorithm of path-finding.
@@ -168,7 +168,6 @@ public class mazeExplorer : IA {
         public void initializeForPathFinding() {
             estimation = int.MaxValue;
             hasBeenChecked = false;
-            isSource = false;
             predecessor = null;
         }
 
@@ -192,7 +191,6 @@ public class mazeExplorer : IA {
         public void relax()
         {
             estimation = 0;
-            isSource = true;
             hasBeenChecked = true;
 
             foreach (Node n in joinedNodes)

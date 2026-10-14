@@ -37,7 +37,7 @@ public class twiddleManager : OptimizationManager {
         }
 
         actualGeneration++;
-        Debug.Log("Experiment " + actualGeneration + " started");
+        // Debug.Log("Experiment " + actualGeneration + " started");
     }
 
     bool resObtained = false;
@@ -106,19 +106,19 @@ public class twiddleManager : OptimizationManager {
         // in this way is possible to continue the training until a certain point and later start from that point
         if (readFile) {
             float[,] t = dataReader.readFile(folder + "\\" + PathFileToRead);
-            if (t == null) { Debug.Log("Check the filename"); readFile = false; return; }
+            if (t == null) { /* Debug.Log("Check the filename"); */ readFile = false; return; }
 
             for (int i = 0; i <= t.GetUpperBound(1); i++)
                 myVals[i] = t[0,i];
             for (int i = 0; i <= t.GetUpperBound(1); i++)
                 potencialChanges[i] = t[1,i];
             
-            Debug.Log("file readed");
+            // Debug.Log("file readed");
             readFile = false;
             twiddleStep = -2;
             iPC = 0;
         }
-        else if (twiddle()) Debug.Log("Experiment finished");
+        else if (twiddle()) { /* Debug.Log("Experiment finished"); */ }
     }
 
     float bestFitness = -50f;
@@ -142,7 +142,7 @@ public class twiddleManager : OptimizationManager {
         if (autoSave && iPC % myVals.Length == 0 && twiddleStep == 0)
         {
             SaveStats(myVals, potencialChanges);
-            Debug.Log("Saved Individual on file " + iPC);
+            // Debug.Log("Saved Individual on file " + iPC);
         }
         
         iPC %= myVals.Length;
@@ -159,7 +159,7 @@ public class twiddleManager : OptimizationManager {
         {
             case -2:
                 // FIRST experiment. It is needed to calculate the initial fitness of the individual
-                Debug.Log("Launched experiment -1 ");
+                // Debug.Log("Launched experiment -1 ");
                 startExperiment();
                 twiddleStep++;
                 break;
@@ -167,7 +167,7 @@ public class twiddleManager : OptimizationManager {
                 if (resObtained)    // wait until the experiment ends
                 {
                     // associates the bestFitness with the result obtained and go on
-                    Debug.Log("obteined results of exp -1, initial fitness [" + tmpFitness + "]");
+                    // Debug.Log("obteined results of exp -1, initial fitness [" + tmpFitness + "]");
                     resObtained = false;
                     bestFitness = tmpFitness;
                     twiddleStep = 0;                   
@@ -176,7 +176,7 @@ public class twiddleManager : OptimizationManager {
             case 0:
                 // sum the value of potencial changes to the parameter taken in consideration
                 actualTime = twiddleSettings.increaseTimeLimit();
-                Debug.Log("twiddle started on indx " + iPC + "; Experiments duration ->" + actualTime);                
+                // Debug.Log("twiddle started on indx " + iPC + "; Experiments duration ->" + actualTime);
                 myVals[iPC] += potencialChanges[iPC];
                 startExperiment();
                 twiddleStep++;
@@ -187,7 +187,7 @@ public class twiddleManager : OptimizationManager {
                     resObtained = false;
                     if (tmpFitness > bestFitness)   // There was some improvement. Increase this PC and move on next 
                     {
-                        Debug.Log("IMPROVED  [" + tmpFitness + "<->" + bestFitness + "]. increase & next iPC");
+                        // Debug.Log("IMPROVED  [" + tmpFitness + "<->" + bestFitness + "]. increase & next iPC");
                         bestFitness = tmpFitness;
                         potencialChanges[iPC] *= 1.1f;
                         iPC++;
@@ -195,7 +195,7 @@ public class twiddleManager : OptimizationManager {
                     }
                     else    // no improvement. Try on the other direction
                     {
-                        Debug.Log("no improvements  [" + tmpFitness + "<->" + bestFitness + "]. revert & repeat experiment");
+                        // Debug.Log("no improvements  [" + tmpFitness + "<->" + bestFitness + "]. revert & repeat experiment");
                         myVals[iPC] -= 2 * potencialChanges[iPC];
                         startExperiment();
                         twiddleStep++;                        
@@ -208,13 +208,13 @@ public class twiddleManager : OptimizationManager {
                     resObtained = false;
                     if (tmpFitness > bestFitness)   // There was some improvement. Increase this PC and move on next 
                     {
-                        Debug.Log("IMPROVED  [" + tmpFitness + "<->" + bestFitness + "]. increase & next iPC");
+                        // Debug.Log("IMPROVED  [" + tmpFitness + "<->" + bestFitness + "]. increase & next iPC");
                         bestFitness = tmpFitness;
                         potencialChanges[iPC] *= 1.1f;
                     }
                     else    // no improvement. Adjust val and reduce this PC
                     {
-                        Debug.Log("no improvements  [" + tmpFitness + "<->" + bestFitness + "]. reset changes & next iPC");
+                        // Debug.Log("no improvements  [" + tmpFitness + "<->" + bestFitness + "]. reset changes & next iPC");
                         myVals[iPC] += potencialChanges[iPC];
                         potencialChanges[iPC] *= 0.9f;
                     }

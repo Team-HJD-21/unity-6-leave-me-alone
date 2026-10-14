@@ -18,7 +18,7 @@ public partial class EnemyisPickToggleAction : Action
 
         if (targetObj == null)
         {
-            Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
+            // Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
             return Status.Failure;
         }
 
@@ -26,13 +26,13 @@ public partial class EnemyisPickToggleAction : Action
 
         if (_enemy == null)
         {
-            Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 EnemyCtrl 없습니다.");
+            // Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 EnemyCtrl 없습니다.");
             return Status.Failure;
         }
 
         _enemy.isPicked = Value;
 
-        Debug.Log($"✅ Target '{targetObj.name}'의 isPicked 값을 {_enemy.isPicked}로 설정했습니다.");
+        // Debug.Log($"✅ Target '{targetObj.name}'의 isPicked 값을 {_enemy.isPicked}로 설정했습니다.");
         return Status.Success;
     }
 }

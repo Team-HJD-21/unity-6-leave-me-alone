@@ -86,7 +86,7 @@ public class GameManager : Singleton<GameManager>
         {
             SoundManager.Instance.PlayBGM(SoundManager.Bgm.BGM3, true);
             bgm3Started = true;
-            Debug.Log("[GameManager] 첫 입력 감지 → BGM3 시작");
+            // Debug.Log("[GameManager] 첫 입력 감지 → BGM3 시작");
         }
 
         // ✅ 게임 타이머 진행
@@ -99,7 +99,7 @@ public class GameManager : Singleton<GameManager>
                 almostFinished = true;
                 SoundManager.Instance.PlayBGM(SoundManager.Bgm.BGM3, false); // BGM3 정지
                 SoundManager.Instance.PlayBGM(SoundManager.Bgm.BGM2, true);  // BGM2 재생
-                Debug.Log("[GameManager] 3분 경과 → BGM3 종료, BGM2 시작");
+                // Debug.Log("[GameManager] 3분 경과 → BGM3 종료, BGM2 시작");
             }
 
             if (gameTimer >= maxGameTime)
@@ -145,7 +145,7 @@ public class GameManager : Singleton<GameManager>
         {
             SetSceneState(GameSceneState.MainGame);
             hasInitializedMainGame = true;
-            Debug.Log("[GameManager] MainGameScene 로딩 완료됨. 초기화 수행.");
+            // Debug.Log("[GameManager] MainGameScene 로딩 완료됨. 초기화 수행.");
 
             CountTomatoes();
 
@@ -198,9 +198,9 @@ public class GameManager : Singleton<GameManager>
     {
         enemyTomatoes = FindObjectsByType<EnemyTomatoCtrl>(FindObjectsSortMode.None);
         playerTomatoes = FindObjectsByType<PlayerTomatoCtrl>(FindObjectsSortMode.None);
-        Debug.Log("Tomato Initialized");
-        Debug.Log(enemyTomatoes.Length);
-        Debug.Log(playerTomatoes.Length);
+        // Debug.Log("Tomato Initialized");
+        // Debug.Log(enemyTomatoes.Length);
+        // Debug.Log(playerTomatoes.Length);
     }
 
     public void SetSceneState(GameSceneState newState)
@@ -208,7 +208,7 @@ public class GameManager : Singleton<GameManager>
         if (CurrentSceneState == newState) return;
 
         CurrentSceneState = newState;
-        Debug.Log($"[GameManager] Scene changed to: {newState}");
+        // Debug.Log($"[GameManager] Scene changed to: {newState}");
 
         switch (newState)
         {

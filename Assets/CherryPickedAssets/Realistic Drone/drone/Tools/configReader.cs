@@ -21,9 +21,9 @@ public class configReader : MonoBehaviour {
         if (readFile)
         {
             string path = folder;
-            Debug.Log(path + "\\" + PathFileToRead);
+            // Debug.Log(path + "\\" + PathFileToRead);
             float[,] t = dataReader.readFile(path + "\\" + PathFileToRead);
-            if (t == null) { Debug.Log("Check the filename, " + path + "\\" + PathFileToRead + "- not found"); readFile = false; return; }
+            if (t == null) { /* Debug.Log("Check the filename, " + path + "\\" + PathFileToRead + "- not found"); */ readFile = false; return; }
 
             
             float[] myVals = new float[t.GetUpperBound(1) + 1];
@@ -32,7 +32,7 @@ public class configReader : MonoBehaviour {
 
             writeKeysOnDMC(myVals);
 
-            Debug.Log("file readed");
+            // Debug.Log("file readed");
             readFile = false;
         }
     }

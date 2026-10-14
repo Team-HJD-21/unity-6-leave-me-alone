@@ -21,7 +21,7 @@ public partial class ChangePlayerTomatoIntoIsPickedAction : Action
 
         if (targetObj == null)
         {
-            Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
+            // Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
             return Status.Failure;
         }
 
@@ -29,7 +29,7 @@ public partial class ChangePlayerTomatoIntoIsPickedAction : Action
 
         if (_playerTomato == null)
         {
-            Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 TomatoCtrlPlayer이 없습니다.");
+            // Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 TomatoCtrlPlayer이 없습니다.");
             return Status.Failure;
         }
 
@@ -37,7 +37,7 @@ public partial class ChangePlayerTomatoIntoIsPickedAction : Action
         {
             enemy.enemyScore += 4;
             _playerTomato.isPicked = Value;
-            Debug.Log($"✅ Target '{targetObj.name}'의 isPicked 값을 {Value}로 설정했습니다.");    
+            // Debug.Log($"✅ Target '{targetObj.name}'의 isPicked 값을 {Value}로 설정했습니다.");
             // return Status.Success;
         }
         return Status.Success;

@@ -19,7 +19,7 @@ public partial class IsSeedingAction : Action
 
         if (targetObj == null)
         {
-            Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
+            // Debug.LogError("❌ Blackboard에서 전달된 Target 오브젝트가 null입니다.");
             return Status.Failure;
         }
 
@@ -27,13 +27,13 @@ public partial class IsSeedingAction : Action
 
         if (_enemyTomato == null)
         {
-            Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 TomatoCtrl이 없습니다.");
+            // Debug.LogError($"❌ Target 오브젝트 '{targetObj.name}'에 TomatoCtrl이 없습니다.");
             return Status.Failure;
         }
 
         _enemyTomato.isSeeding = Value;
 
-        Debug.Log($"✅ Target '{targetObj.name}'의 isSeeding 값을 {_enemyTomato.isSeeding}로 설정했습니다.");
+        // Debug.Log($"✅ Target '{targetObj.name}'의 isSeeding 값을 {_enemyTomato.isSeeding}로 설정했습니다.");
         return Status.Success;
     }
 }

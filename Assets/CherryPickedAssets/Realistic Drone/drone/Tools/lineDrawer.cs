@@ -13,7 +13,7 @@ public class lineDrawer : MonoBehaviour {
     /// </summary>
     void Start() {        
         lr = gameObject.GetComponent<LineRenderer>();
-        lr.SetVertexCount(lengthOfLineRenderer);
+        lr.positionCount = lengthOfLineRenderer;
 
         ticket = initialPosition;
          

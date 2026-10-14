@@ -17,6 +17,12 @@ namespace Unity.Behavior.Example
 
         protected override Status OnUpdate()
         {
+            // Vehicle graphs must keep the instance returned by Instantiate Object.
+            // A global tag search can select a truck owned by another running graph.
+            if (TagValue.Value == "PlayerCar" || TagValue.Value == "EnemyCar")
+                return Target.Value != null && Target.Value.CompareTag(TagValue.Value)
+                    ? Status.Success : Status.Failure;
+
             GameObject[] tagged = GameObject.FindGameObjectsWithTag(TagValue);
             if (tagged == null || tagged.Length == 0)
             {

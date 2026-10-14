@@ -64,7 +64,7 @@ public class twiddleBehaviour : OptimizationBehaviour {
     /// <param name="waypoint">WaypointCircuit that will be used for the experiment</param>
     public override void setInitialKs(GameObject waypoint)
     {
-        Debug.Log("Something is wrong. You shouldn't be here!");
+        // Debug.Log("Something is wrong. You shouldn't be here!");
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public class twiddleBehaviour : OptimizationBehaviour {
     /// </summary>
     public override float[] getKeys()
     {
-        Debug.Log("Something is wrong. You shouldn't be here!");
+        // Debug.Log("Something is wrong. You shouldn't be here!");
         return new float[] { 0 };
     }
 }

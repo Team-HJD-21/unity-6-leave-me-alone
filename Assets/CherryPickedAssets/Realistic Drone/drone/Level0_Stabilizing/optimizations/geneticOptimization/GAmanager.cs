@@ -30,7 +30,7 @@ public class GAmanager : OptimizationManager {
             if (readFile)
             {
                 float[,] t = dataReader.readFile(folder + "\\" + PathFileToRead);
-                if (t == null) { Debug.Log("Check the filename"); readFile = false; return; }
+                if (t == null) { /* Debug.Log("Check the filename"); */ readFile = false; return; }
 
                 float[] vals = new float[t.GetUpperBound(1) + 1];
                 for (int k = 0; k < vals.Length; k++)
@@ -165,7 +165,7 @@ public class GAmanager : OptimizationManager {
     {
         storeInitialPos = nextPosition;
         step = -2;
-        Random.seed = (int)System.DateTime.Now.Ticks;
+        Random.InitState((int)System.DateTime.Now.Ticks);
         initializeRndPopulation();
         initializeds();
         timeStepLevel = GeneticSettings.timelimit;        
@@ -221,14 +221,14 @@ public class GAmanager : OptimizationManager {
                 if (transform.childCount == 0)
                 {
                     step++;
-                    Debug.Log("-1 passed - All sons have lived until their limit and sent the data -");
+                    // Debug.Log("-1 passed - All sons have lived until their limit and sent the data -");
                 }
                 else if (transform.childCount < 4)
                 {
                     foreach (geneticBehaviour g in GetComponentsInChildren<geneticBehaviour>())
                         g.fatherSayIHaveToSendMyData = true;
                     step++;
-                    Debug.Log("-1 passed - most of the sons died, saved the most adapted to the experiment -");
+                    // Debug.Log("-1 passed - most of the sons died, saved the most adapted to the experiment -");
                 }
                 break;
             case 0:
@@ -244,7 +244,7 @@ public class GAmanager : OptimizationManager {
                 }
                 System.Array.Sort(fitnessesOfSurvived, survivedSons);
                 step++;
-                Debug.Log("0 passed - Sons are stored and sorted -");
+                // Debug.Log("0 passed - Sons are stored and sorted -");
                 break;
             case 1:
                 // best individuals are selected and saved to another vector
@@ -254,7 +254,7 @@ public class GAmanager : OptimizationManager {
                 for (int k = 0; k < bestIndividual.Length; k++)
                     bestIndividual[k] = survivedSons[k + diff];
                 step++;
-                Debug.Log("1 passed - best sons have been selected -");
+                // Debug.Log("1 passed - best sons have been selected -");
                 break;
             case 2:
                 // best individuals are saved to file for analysis and put in the list so they'll be respawned in the next generation
@@ -263,27 +263,27 @@ public class GAmanager : OptimizationManager {
                 {
                     storeSons(bestIndividual[i].getKeys());                   
                     SaveStats(bestIndividual[i].getKeys(), bestIndividual[i].fitness());
-                    Debug.Log("generatedReinjectedSon");
+                    // Debug.Log("generatedReinjectedSon");
                 }
                 step++;
-                Debug.Log("2 passed - elité sons have been reinjected in the birth-list and saved -");
+                // Debug.Log("2 passed - elité sons have been reinjected in the birth-list and saved -");
                 break;
             case 3:
                 // now we generate new sons using randomly selected individuals
                 while (!hasReachedMaximum)
                 {
-                    Random.seed = (int)System.DateTime.Now.Ticks;
+                    Random.InitState((int)System.DateTime.Now.Ticks);
                     geneticBehaviour A = survivedSons[Random.Range(0, survivedSons.Length)];
                     geneticBehaviour B = survivedSons[Random.Range(0, survivedSons.Length)];
 
                     if ((A.getID() != B.getID() || bestIndividual.Length == 1) && A.numberOfSonsCreated < GeneticSettings.maxNumberOfSons)
                     {
                         storeSons(A.cross(B.getKeys()));
-                        Debug.Log("generatedNewSon");
+                        // Debug.Log("generatedNewSon");
                     }
                 }                    
                 step++;
-                Debug.Log("3 passed - the rest of the population has been queued in the birth-list -");
+                // Debug.Log("3 passed - the rest of the population has been queued in the birth-list -");
                 break;
             case 4:
                 // reinitializing variables for the next generation
@@ -297,7 +297,7 @@ public class GAmanager : OptimizationManager {
                 }
                     
                 step++;
-                Debug.Log("4 passed - inizialized variables and setted time -");
+                // Debug.Log("4 passed - inizialized variables and setted time -");
                 break;
             case 5:
                 // regenerating the population, eventually changing the experiment duration and setting the step to -1 so the process restart from the beginning
@@ -308,7 +308,7 @@ public class GAmanager : OptimizationManager {
                     fitnesses = new float[transform.childCount];
                     actGeneration++;
                     step = -1;
-                    Debug.Log("5 passed - new population has been generated. Next experiment duration:" + GeneticSettings.timelimit + " -");
+                    // Debug.Log("5 passed - new population has been generated. Next experiment duration:" + GeneticSettings.timelimit + " -");
                 }                    
 
                 break;

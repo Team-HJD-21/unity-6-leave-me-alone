@@ -54,7 +54,6 @@ public class IA : MonoBehaviour {
         myWpPrTrk.hasToRecalculateDistance();
     }
 
-    float pointMovingStep = 0.1f;
     /// <summary>
     /// The position of the singlePoint
     /// </summary>
