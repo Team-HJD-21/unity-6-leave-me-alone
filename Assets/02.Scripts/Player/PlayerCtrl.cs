@@ -240,7 +240,7 @@ public class PlayerCtrl : MonoBehaviour
     }
     IEnumerator DroneBarCountdown(float duration)
     {
-        Debug.Log("Drone Bar Countdown");
+        // Debug.Log("Drone Bar Countdown");
         // DroneBarSlider.gameObject.SetActive(true);
         DroneBarSlider.value = 60f;
 
@@ -381,7 +381,7 @@ public class PlayerCtrl : MonoBehaviour
                         isSeedScheduled = true;
                         anim.SetBool("isTraceForward",false);
                         anim.SetBool("isPlanting", true);
-                        Debug.Log("player set seed for player tomato");
+                        // Debug.Log("player set seed for player tomato");
                         playerDelaySetSeed = StartCoroutine(DelaySetSeed(playerTomato));
                     }
                     else

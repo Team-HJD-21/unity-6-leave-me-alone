@@ -50,7 +50,6 @@ namespace SlimUI.ModernMenu{
 		public GameObject sensitivityYSlider;
 		public GameObject mouseSmoothSlider;
 
-		private float sliderValue = 0.0f;
 		private float sliderValueXSensitivity = 0.0f;
 		private float sliderValueYSensitivity = 0.0f;
 		private float sliderValueSmoothing = 0.0f;
@@ -232,7 +231,7 @@ namespace SlimUI.ModernMenu{
 
 		public void SensitivitySmoothing (){
 			PlayerPrefs.SetFloat("MouseSmoothing", sliderValueSmoothing);
-			Debug.Log(PlayerPrefs.GetFloat("MouseSmoothing"));
+			// Debug.Log(PlayerPrefs.GetFloat("MouseSmoothing"));
 		}
 
 		// the playerprefs variable that is checked to enable hud while in game

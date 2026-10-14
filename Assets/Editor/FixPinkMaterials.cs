@@ -463,7 +463,7 @@ public sealed class FixPinkMaterials : EditorWindow
         ScanPaths(rescannedPaths);
         _status = $"Repair complete. Repaired {repairedCount}; failed {failedCount}; remaining {_results.Count}.";
 
-        Debug.Log($"[PinkMaterialRepair] Repaired {repairedCount} material(s); failed {failedCount}; remaining {_results.Count}.");
+        // Debug.Log($"[PinkMaterialRepair] Repaired {repairedCount} material(s); failed {failedCount}; remaining {_results.Count}.");
     }
 
     private bool ApplyOfficialUpgrade(Material material)
@@ -477,7 +477,7 @@ public sealed class FixPinkMaterials : EditorWindow
 
         if (!upgraded && !string.IsNullOrEmpty(message))
         {
-            Debug.LogWarning($"[PinkMaterialRepair] {message}", material);
+            // Debug.LogWarning($"[PinkMaterialRepair] {message}", material);
         }
 
         return upgraded;
@@ -491,7 +491,7 @@ public sealed class FixPinkMaterials : EditorWindow
         Shader targetShader = Shader.Find(shaderName);
         if (targetShader == null)
         {
-            Debug.LogError($"[PinkMaterialRepair] Could not find fallback shader '{shaderName}'.", material);
+            // Debug.LogError($"[PinkMaterialRepair] Could not find fallback shader '{shaderName}'.", material);
             return false;
         }
 
@@ -780,10 +780,10 @@ public sealed class FixPinkMaterials : EditorWindow
                 }
             }
         }
-        catch (Exception exception)
+        catch (Exception /* exception */)
         {
-            Debug.LogWarning(
-                $"[PinkMaterialRepair] Could not load Unity's complete URP upgrader list: {exception.Message}");
+            // Debug.LogWarning(
+                // $"[PinkMaterialRepair] Could not load Unity's complete URP upgrader list: {exception.Message}");
         }
 
         if (upgraders.Count == 0)

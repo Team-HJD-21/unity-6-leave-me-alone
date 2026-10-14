@@ -70,7 +70,7 @@ public class PlayerTomatoCtrl : MonoBehaviour
             if (PlayerUsing&& _growthLevel ==5 && isPicked)
             {
                 int itemRandint = Random.Range(0, 3);
-                Debug.Log("Player random itemint" + itemRandint);
+                // Debug.Log("Player random itemint" + itemRandint);
                 // Debug.Log("itemgiven");
                 GameObject player = GameObject.FindWithTag("Player");
                 var playerScript = player.GetComponent<PlayerCtrl>();
@@ -190,7 +190,7 @@ public class PlayerTomatoCtrl : MonoBehaviour
     }
     public void GrowDelayDecrease()
     {
-        Debug.Log("GrowDelayDecrease");
+        // Debug.Log("GrowDelayDecrease");
         growDelay = 1f;
         ripeningTime = 5f;
         //todo activate boost icon

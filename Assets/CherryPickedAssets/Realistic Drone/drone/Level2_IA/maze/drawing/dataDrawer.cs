@@ -38,7 +38,7 @@ public class dataDrawer : MonoBehaviour {
         dronepinscontainer = transform.Find("dronepinscontainer");
 
         lr = gameObject.AddComponent<LineRenderer>();
-        lr.SetVertexCount(5);
+        lr.positionCount = 5;
         Vector3 pt = transform.position;
 
         // draw the borders
